@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/buttonSimpleControl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Simple Control"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/buttonJoystickControl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Joystick Control" />
+</LinearLayout>
