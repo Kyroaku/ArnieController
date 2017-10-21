@@ -16,8 +16,13 @@
             </intent-filter>
         </activity>
 
+
         <activity
             android:name=".SimpleControlActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".jostick_control"
             android:label="@string/app_name" >
         </activity>
 

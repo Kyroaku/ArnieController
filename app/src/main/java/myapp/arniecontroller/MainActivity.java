@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     Button buttonSimpleControl;
@@ -44,14 +43,20 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.buttonSimpleControl:
                     try {
                         startActivity(new Intent(MainActivity.this, SimpleControlActivity.class));
-                    }
+            }
                     catch(Exception e) {
                         Log.e("startActivity()", e.getMessage());
                     }
                     break;
 
                 case R.id.buttonJoystickControl:
-                    Toast.makeText(getApplicationContext(), "Not implemented!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "Not implemented!", Toast.LENGTH_SHORT).show();
+                    try{
+                        startActivity(new Intent(MainActivity.this, jostick_control.class));
+                    }
+                    catch(Exception e) {
+                        Log.e("startActivity()", e.getMessage());
+                    }
                     break;
             }
         }

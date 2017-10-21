@@ -15,5 +15,6 @@
         android:id="@+id/buttonJoystickControl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Joystick Control" />
+        android:text="Joystick Control"
+        android:textAlignment="center" />
 </LinearLayout>
