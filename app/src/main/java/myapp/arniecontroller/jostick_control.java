@@ -11,8 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
-import static myapp.arniecontroller.R.id.imageView2;
-
 
 /**
  * Created by Szymon on 21.10.2017.
@@ -31,7 +29,7 @@ public class jostick_control extends Activity implements View.OnTouchListener {
 
 
 
-        imageView = (ImageView) this.findViewById(imageView2);
+        imageView = (ImageView) this.findViewById(R.id.ImageView);
         //imageView.setImageResource(R.drawable\ic_notification_overlay);
        // imageView.setImageDrawable();
         Display currentDisplay = getWindowManager().getDefaultDisplay();
