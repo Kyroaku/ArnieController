@@ -3,11 +3,9 @@ package myapp.arniecontroller;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,7 +15,7 @@ import android.widget.ImageView;
  * Created by Szymon on 21.10.2017.
  */
 
-public class jostick_control extends Activity implements OnTouchListener {
+public class jostick_control extends Activity implements View.OnTouchListener {
     ImageView imageView;
     Bitmap bitmap;
     Canvas canvas;
@@ -30,16 +28,6 @@ public class jostick_control extends Activity implements OnTouchListener {
 
 
         imageView = (ImageView) this.findViewById(R.id.ImageView);
-
-        Display currentDisplay = getWindowManager().getDefaultDisplay();
-        float dw = currentDisplay.getWidth();
-        float dh = currentDisplay.getHeight();
-
-        bitmap = Bitmap.createBitmap((int) dw, (int) dh,Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(bitmap);
-        paint = new Paint();
-        paint.setColor(Color.GREEN);
-        imageView.setImageBitmap(bitmap);
         imageView.setOnTouchListener(this);
     }
 

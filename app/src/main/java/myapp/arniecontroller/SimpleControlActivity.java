@@ -2,18 +2,24 @@ package myapp.arniecontroller;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Locale;
 
 import static myapp.arniecontroller.R.id.seekBar;
 
 /**
- * Created by Kyroaku on 2017-10-18.
+ * Created by Marcin Dziedzic on 2017-10-18.
  */
 
 public class SimpleControlActivity extends Activity {
+    private static final int SERVER_PORT = 1440;
+    private
 
     SeekBar seekbar;
     SeekBar seekbar2;
@@ -22,13 +28,18 @@ public class SimpleControlActivity extends Activity {
     TextView textView2;
     TextView textView3;
 
+    ServerSocket serverSocket;
+    Socket socket;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_control);
 
+        // Create callback for all seek bars.
         SeekBar.OnSeekBarChangeListener seekBarCallback = new SeekBarCallback();
 
+        // Set callback to each seek bar.
         seekbar = (SeekBar) findViewById(seekBar);
         seekbar.setMax(180);
         seekbar.setOnSeekBarChangeListener(seekBarCallback);
@@ -41,6 +52,7 @@ public class SimpleControlActivity extends Activity {
         seekbar3.setMax(180);
         seekbar3.setOnSeekBarChangeListener(seekBarCallback);
 
+        // Init text views.
         textView = (TextView) findViewById(R.id.textView);
         textView.setText("0");
 
@@ -49,8 +61,41 @@ public class SimpleControlActivity extends Activity {
 
         textView3 = (TextView) findViewById(R.id.textView3);
         textView3.setText("0");
+
+        Thread acceptThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    serverSocket = new ServerSocket();
+                    serverSocket.setReuseAddress(true);
+                    serverSocket.bind(new InetSocketAddress(SERVER_PORT));
+                    serverSocket.setSoTimeout(3000);
+                    socket = serverSocket.accept();
+                } catch(Exception e) {
+                    Log.e("Socket", e.getMessage());
+                }
+                try {
+                    if(!serverSocket.isClosed())
+                        serverSocket.close();
+                    if(!socket.isClosed())
+                        socket.close();
+                } catch(Exception e) {
+                    Log.e("Socket", e.getMessage());
+                }
+            }
+        });
+        acceptThread.start();
+        try {
+            acceptThread.join();
+        } catch(Exception e) {
+            Log.e("Thread", e.getMessage());
+        }
+
     }
 
+    /**
+     * Callback class for all seek bars in simple control.
+     */
     private class SeekBarCallback implements SeekBar.OnSeekBarChangeListener
     {
         @Override
