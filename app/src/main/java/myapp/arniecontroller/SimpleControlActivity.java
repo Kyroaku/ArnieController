@@ -2,11 +2,9 @@ package myapp.arniecontroller;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Locale;
@@ -61,36 +59,6 @@ public class SimpleControlActivity extends Activity {
 
         textView3 = (TextView) findViewById(R.id.textView3);
         textView3.setText("0");
-
-        Thread acceptThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    serverSocket = new ServerSocket();
-                    serverSocket.setReuseAddress(true);
-                    serverSocket.bind(new InetSocketAddress(SERVER_PORT));
-                    serverSocket.setSoTimeout(3000);
-                    socket = serverSocket.accept();
-                } catch(Exception e) {
-                    Log.e("Socket", e.getMessage());
-                }
-                try {
-                    if(!serverSocket.isClosed())
-                        serverSocket.close();
-                    if(!socket.isClosed())
-                        socket.close();
-                } catch(Exception e) {
-                    Log.e("Socket", e.getMessage());
-                }
-            }
-        });
-        acceptThread.start();
-        try {
-            acceptThread.join();
-        } catch(Exception e) {
-            Log.e("Thread", e.getMessage());
-        }
-
     }
 
     /**

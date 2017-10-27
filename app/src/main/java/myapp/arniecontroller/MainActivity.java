@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 // Simple control button.
                 case R.id.buttonSimpleControl:
                     try {
+                        WifiManager.OpenServer();
                         startActivity(new Intent(MainActivity.this, SimpleControlActivity.class));
                     }
                     catch(Exception e) {
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 // Joystick control button.
                 case R.id.buttonJoystickControl:
                     //Toast.makeText(getApplicationContext(), "Not implemented!", Toast.LENGTH_SHORT).show();
-                    try{
+                    try {
                         startActivity(new Intent(MainActivity.this, jostick_control.class));
                     }
                     catch(Exception e) {
@@ -62,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
                 // Simulator button.
                 case R.id.buttonSimulator:
-                    try{
+                    try {
+                        WifiManager.Connect();
                         startActivity(new Intent(MainActivity.this, SimulatorActivity.class));
                     }
                     catch(Exception e) {
