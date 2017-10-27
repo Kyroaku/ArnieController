@@ -17,7 +17,6 @@ import static myapp.arniecontroller.R.id.seekBar;
 
 public class SimpleControlActivity extends Activity {
     private static final int SERVER_PORT = 1440;
-    private
 
     SeekBar seekbar;
     SeekBar seekbar2;

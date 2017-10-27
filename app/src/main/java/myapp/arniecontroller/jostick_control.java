@@ -1,84 +1,107 @@
 package myapp.arniecontroller;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Locale;
-
-import static myapp.arniecontroller.R.id.imageView2;
-
 
 /**
  * Created by Szymon on 21.10.2017.
  */
 
 public class jostick_control extends Activity implements View.OnTouchListener {
-    ImageView imageView;
-    Bitmap bitmap;
-    Canvas canvas;
-    Paint paint;
+    float joystickX = 0;
+    float joystickY = 0;
+    float joystickR = 100.0f;
+
+    ImageView imageJoystick1;
     TextView textXY;
+    View screenView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.jostick_control);
 
-
+        // Find views.
         textXY = (TextView) this.findViewById(R.id.textXY);
-        imageView = (ImageView) this.findViewById(imageView2);
 
-        Display currentDisplay = getWindowManager().getDefaultDisplay();
-        float dw = currentDisplay.getWidth();
-        float dh = currentDisplay.getHeight();
+        imageJoystick1 = (ImageView) this.findViewById(R.id.imageJoystick1);
 
+        screenView = findViewById(R.id.joystickScreenView);
 
-        imageView.setOnTouchListener(this);
+        // Set touch listener to main layout (it is on whole screen, so we have global position of touch).
+        screenView.setOnTouchListener(this);
 
+        // Observer needed to wait for layout inizialization finished.
+        screenView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            public void onGlobalLayout() {
+                screenView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+                // Set position set in designer as a position of joystick.
+                Rect rect = new Rect();
+                imageJoystick1.getGlobalVisibleRect(rect);
+                joystickX = rect.left + imageJoystick1.getWidth() / 2;
+                joystickY = rect.top + imageJoystick1.getHeight() / 2;
+                screenView.getGlobalVisibleRect(rect);
+                joystickX -= rect.left;
+                joystickY -= rect.top;
+            }
+        });
     }
 
+    /**
+     * On Touch method - update joysticks.
+     */
     public boolean onTouch(View v, MotionEvent event) {
-        int action = event.getAction();
-        float BaseRadius=Math.min(imageView.getWidth(), imageView.getHeight() )/3;
-        float x, y,image_width,image_height,R=100,cx,cy;
+        float x = event.getX(); /* touch x position. */
+        float y = event.getY(); /* touch y position. */
+        float dx = 0;           /* joystick x axis. */
+        float dy = 0;           /* joystick y axis. */
 
-
-
-        image_height= imageView.getHeight()/(float)2;
-        image_width= imageView.getWidth()/(float)2;
-
-        if(event.getAction() != event.ACTION_UP)
-        {
-            float displacement = (float) Math.sqrt(Math.pow(event.getX() - image_width, 2) + Math.pow(event.getY() - image_height, 2));
-            if(displacement>50)
-            {imageView.setY(0);
-                imageView.setX(375);
-
-
-               // Log.d("Touch", "Touch move " + event.getX() + " " + event.getY());
+        switch(event.getAction()) {
+            case MotionEvent.ACTION_MOVE:
+            case MotionEvent.ACTION_DOWN: {
+                /* Calculate distance between touch and joystick base position. */
+                dx = x - joystickX;
+                dy = y - joystickY;
+                float distance = (float) Math.sqrt(dx * dx + dy * dy);
+                /* If touch outside joystick area. */
+                if (distance > joystickR) {
+                    /* Move joystick position to edge of joystick area, where distance==joystickR. */
+                    float ratio = joystickR / distance;
+                    x = (x - joystickX) * ratio + joystickX;
+                    y = (y - joystickY) * ratio + joystickY;
+                }
             }
-            else
-            {
-                x=imageView.getX();
-                y=imageView.getY();
+            break;
 
-                float conX=event.getX()-image_width;
-                float conY=event.getY()-image_height;
-                imageView.setX(event.getX()+x);
-                imageView.setY(event.getY()+y);
-                Log.d("Touch", "Touch move x=" + conX + " y=" + conY);
-
-                textXY.setText(String.format(Locale.getDefault(), "x=%f y=%f ", conX,conY));
-            }
+            case MotionEvent.ACTION_UP: {
+                /* Set joystick position to base joystick position, when finger isn't on screen. */
+                x = joystickX;
+                y = joystickY;
+            } break;
         }
+
+        /* Set joystick image at new position. */
+        imageJoystick1.setX(x - imageJoystick1.getWidth() / 2);
+        imageJoystick1.setY(y - imageJoystick1.getHeight() / 2);
+
+        /* Calculate joystick axes. */
+        dx = x - joystickX;
+        dy = y - joystickY;
+        /* Normalize joystick axes. */
+        dx /= joystickR;
+        dy /= joystickR;
+
+        /* Update text with axes info. */
+        textXY.setText(String.format(Locale.getDefault(), "x=%f y=%f ", dx, dy));
+
         return true;
     }
 }
