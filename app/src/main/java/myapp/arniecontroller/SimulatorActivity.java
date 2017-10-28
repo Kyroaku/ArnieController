@@ -8,9 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Scanner;
 
 /**
  * Created by Marcin Dziedzic on 2017-10-26.
@@ -42,8 +44,6 @@ public class SimulatorActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // Data buffer.
-                final byte[] buffer = new byte[256];
                 while(true) {
                     // Do nothint if not connected.
                     if(!WifiManager.IsConnected()) {
@@ -54,17 +54,18 @@ public class SimulatorActivity extends Activity {
                         continue;
                     }
                     // If received data, update receveived text on layout.
-                    if(WifiManager.Receive(buffer) > 0) {
+                    final FrameAngles frame = (FrameAngles)WifiManager.ReceiveObject();
+                    if(frame != null) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                String text = "";
-                                try {
-                                    text = new String(buffer, "UTF-8");
-                                } catch(Exception e) {
-
-                                }
-                                mTextReceived.setText(mTextReceived.getText() + "\n" + text);
+                                String text = "Frame ==========\n";
+                                text += "Command=" + String.valueOf(frame.Command()) + "\n";
+                                text += "Angles=[" + String.valueOf(frame.Angle1()) + ", ";
+                                text += String.valueOf(frame.Angle2()) + ", ";
+                                text += String.valueOf(frame.Angle3()) + "]\n";
+                                text += "================\n";
+                                mTextReceived.setText(mTextReceived.getText() + text);
                             }
                         });
                     }
@@ -100,7 +101,11 @@ public class SimulatorActivity extends Activity {
                         @Override
                         public void run() {
                             try {
-                                mSocket.getOutputStream().write(mTextToSend.getText().toString().getBytes());
+                                FrameAngles frame = new FrameAngles();
+                                Scanner scan = new Scanner(mTextToSend.getText().toString());
+                                frame.Angles(scan.nextByte(), scan.nextByte(), scan.nextByte());
+                                ObjectOutputStream oos = new ObjectOutputStream(mSocket.getOutputStream());
+                                oos.writeObject(frame);
                             } catch(Exception e) {
 
                             }
