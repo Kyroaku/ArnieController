@@ -46,8 +46,13 @@ public class SimulatorActivity extends Activity {
                 final byte[] buffer = new byte[256];
                 while(true) {
                     // Do nothint if not connected.
-                    if(!WifiManager.IsConnected())
+                    if(!WifiManager.IsConnected()) {
+                        try {
+                            Thread.sleep(1);
+                        } catch (Exception e) {
+                        }
                         continue;
+                    }
                     // If received data, update receveived text on layout.
                     if(WifiManager.Receive(buffer) > 0) {
                         runOnUiThread(new Runnable() {

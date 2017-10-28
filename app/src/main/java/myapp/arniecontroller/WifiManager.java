@@ -19,6 +19,9 @@ public class WifiManager {
     // Disable instances.
     private WifiManager() {}
 
+    /**
+     * Open server and wait for new client. New thread is created.
+     */
     public static void OpenServer() {
         Thread acceptThread = new Thread(new Runnable() {
             @Override
@@ -48,17 +51,34 @@ public class WifiManager {
         acceptThread.start();
     }
 
+    /**
+     * Connect to server. New thread is created.
+     */
     public static void Connect() {
-        try {
-            mSocket = new Socket("127.0.0.1", SERVER_PORT);
-        } catch(Exception e) {
-            if(e.getMessage() != null)
-                Log.e("Socket", e.getMessage());
-            else
-                Log.e("Socket", "Socket error.");
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mSocket = new Socket();
+                    mSocket.setReuseAddress(true);
+                    mSocket.connect(new InetSocketAddress("127.0.0.1", SERVER_PORT));
+                    Log.i("Socket", "Connected to server");
+                } catch(Exception e) {
+                    if(e.getMessage() != null)
+                        Log.e("Socket", e.getMessage());
+                    else
+                        Log.e("Socket", "Socket error.");
+                }
+            }
+        }).start();
+
     }
 
+    /**
+     * Receive data from client/server. This method can't be called from UI thread.
+     * @param buffer Received data.
+     * @return Length of received data.
+     */
     public static int Receive(byte[] buffer) {
         int received = 0;
         try {
@@ -72,6 +92,10 @@ public class WifiManager {
         return received;
     }
 
+    /**
+     * Send data to client/server. This method can't be called from UI thread.
+     * @param buffer Data to send.
+     */
     public static void Send(byte[] buffer) {
         try {
             mSocket.getOutputStream().write(buffer);
@@ -83,6 +107,10 @@ public class WifiManager {
         }
     }
 
+    /**
+     * Check whether socket is connected.
+     * @return true - if connected, false - otherwise.
+     */
     public static boolean IsConnected() {
         if(mSocket != null)
             return mSocket.isConnected();
