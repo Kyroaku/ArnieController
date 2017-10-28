@@ -26,37 +26,67 @@ public class WifiManager {
                 try {
                     mServerSocket = new ServerSocket();
                     mServerSocket.setReuseAddress(true);
-                    mServerSocket.bind(new InetSocketAddress(SERVER_PORT));
+                    mServerSocket.bind(new InetSocketAddress("127.0.0.1", SERVER_PORT));
+                    Log.i("Socket", "Server openned");
                     mServerSocket.setSoTimeout(3000);
                     mSocket = mServerSocket.accept();
+                    Log.i("Socket", "Client accepted");
                 } catch(Exception e) {
-                    Log.e("Socket", e.getMessage());
+                    Log.e("Socket", "Server error (" + e.getMessage() + ")");
                     try {
                         if(mServerSocket != null && !mServerSocket.isClosed())
                             mServerSocket.close();
                         if(mSocket != null && !mSocket.isClosed())
                             mSocket.close();
                     } catch(Exception e2) {
-                        Log.e("Socket", e2.getMessage());
+                        Log.e("Socket", "Close error (" + e2.getMessage() + ")");
                     }
                 }
 
             }
         });
         acceptThread.start();
-        try {
-            acceptThread.join();
-        } catch(Exception e) {
-            Log.e("Thread", e.getMessage());
-        }
     }
 
     public static void Connect() {
         try {
             mSocket = new Socket("127.0.0.1", SERVER_PORT);
         } catch(Exception e) {
-            e.printStackTrace();
-            Log.e("Socket", "Can't connect: " + e.getMessage());
+            if(e.getMessage() != null)
+                Log.e("Socket", e.getMessage());
+            else
+                Log.e("Socket", "Socket error.");
         }
+    }
+
+    public static int Receive(byte[] buffer) {
+        int received = 0;
+        try {
+            received = mSocket.getInputStream().read(buffer);
+        } catch(Exception e) {
+            if(e.getMessage() != null)
+                Log.e("Socket", e.getMessage());
+            else
+                Log.e("Socket", "Receive error.");
+        }
+        return received;
+    }
+
+    public static void Send(byte[] buffer) {
+        try {
+            mSocket.getOutputStream().write(buffer);
+        } catch(Exception e) {
+            if (e.getMessage() != null)
+                Log.e("Socket", e.getMessage());
+            else
+                Log.e("Socket", "Send error.");
+        }
+    }
+
+    public static boolean IsConnected() {
+        if(mSocket != null)
+            return mSocket.isConnected();
+        else
+            return false;
     }
 }

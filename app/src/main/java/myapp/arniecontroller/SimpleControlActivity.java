@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Locale;
 
 import static myapp.arniecontroller.R.id.seekBar;
@@ -16,7 +14,6 @@ import static myapp.arniecontroller.R.id.seekBar;
  */
 
 public class SimpleControlActivity extends Activity {
-    private static final int SERVER_PORT = 1440;
 
     SeekBar seekbar;
     SeekBar seekbar2;
@@ -24,9 +21,6 @@ public class SimpleControlActivity extends Activity {
     TextView textView;
     TextView textView2;
     TextView textView3;
-
-    ServerSocket serverSocket;
-    Socket socket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
