@@ -51,6 +51,8 @@ public class jostick_control extends Activity implements View.OnTouchListener {
                 screenView.getGlobalVisibleRect(rect);
                 joystickX -= rect.left;
                 joystickY -= rect.top;
+
+                joystickR = Math.min(screenView.getHeight(), screenView.getWidth()) / 10;
             }
         });
     }
@@ -66,7 +68,8 @@ public class jostick_control extends Activity implements View.OnTouchListener {
 
         switch(event.getAction()) {
             case MotionEvent.ACTION_MOVE:
-            case MotionEvent.ACTION_DOWN: {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN: {
                 /* Calculate distance between touch and joystick base position. */
                 dx = x - joystickX;
                 dy = y - joystickY;
@@ -81,11 +84,13 @@ public class jostick_control extends Activity implements View.OnTouchListener {
             }
             break;
 
-            case MotionEvent.ACTION_UP: {
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_POINTER_UP: {
                 /* Set joystick position to base joystick position, when finger isn't on screen. */
                 x = joystickX;
                 y = joystickY;
-            } break;
+            }
+            break;
         }
 
         /* Set joystick image at new position. */
