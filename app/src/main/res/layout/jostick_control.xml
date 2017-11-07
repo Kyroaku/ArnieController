@@ -11,13 +11,13 @@
         android:id="@+id/imageJoystick1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="65dp"
-        android:layout_marginStart="65dp"
-        android:layout_marginBottom="57dp" />
+        android:layout_marginBottom="110dp"
+        android:layout_marginLeft="110dp"
+        android:layout_marginStart="110dp"
+        android:src="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/textXY"

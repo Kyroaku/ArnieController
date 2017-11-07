@@ -2,6 +2,8 @@ package myapp.arniecontroller;
 
 import android.util.Log;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -92,6 +94,16 @@ public class WifiManager {
         return received;
     }
 
+    public static Object ReceiveObject() {
+        try {
+            ObjectInputStream ois = new ObjectInputStream(mSocket.getInputStream());
+            return ois.readObject();
+        } catch(Exception e) {
+            Log.e("Socket", "Receive error (" + e.getMessage() + ")");
+        }
+        return null;
+    }
+
     /**
      * Send data to client/server. This method can't be called from UI thread.
      * @param buffer Data to send.
@@ -104,6 +116,15 @@ public class WifiManager {
                 Log.e("Socket", e.getMessage());
             else
                 Log.e("Socket", "Send error.");
+        }
+    }
+
+    public static void Send(Object obj) {
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(mSocket.getOutputStream());
+            oos.writeObject(obj);
+        } catch(Exception e) {
+            Log.e("Socket", "Send error (" + e.getMessage() + ")");
         }
     }
 

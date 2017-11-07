@@ -53,30 +53,32 @@ public class jostick_control extends Activity implements View.OnTouchListener {
                 screenView.getGlobalVisibleRect(rect);
                 joystickX -= rect.left;
                 joystickY -= rect.top;
+
+                joystickR = Math.min(screenView.getHeight(), screenView.getWidth()) / 10;
             }
         });
-
     }
 
     /**
      * On Touch method - update joysticks.
-
+     */
     public boolean onTouch(View v, MotionEvent event) {
-        float x = event.getX(); /* touch x position. *
-        float y = event.getY(); /* touch y position. *
-        float dx = 0;           /* joystick x axis. *
-        float dy = 0;           /* joystick y axis.
+        float x = event.getX(); /* touch x position. */
+        float y = event.getY(); /* touch y position. */
+        float dx = 0;           /* joystick x axis. */
+        float dy = 0;           /* joystick y axis. */
 
         switch(event.getAction()) {
             case MotionEvent.ACTION_MOVE:
-            case MotionEvent.ACTION_DOWN: {
-                /* Calculate distance between touch and joystick base position.
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN: {
+                /* Calculate distance between touch and joystick base position. */
                 dx = x - joystickX;
                 dy = y - joystickY;
                 float distance = (float) Math.sqrt(dx * dx + dy * dy);
-                /* If touch outside joystick area. *
+                /* If touch outside joystick area. */
                 if (distance > joystickR) {
-                    /* Move joystick position to edge of joystick area, where distance==joystickR.
+                    /* Move joystick position to edge of joystick area, where distance==joystickR. */
                     float ratio = joystickR / distance;
                     x = (x - joystickX) * ratio + joystickX;
                     y = (y - joystickY) * ratio + joystickY;
@@ -84,27 +86,29 @@ public class jostick_control extends Activity implements View.OnTouchListener {
             }
             break;
 
-            case MotionEvent.ACTION_UP: {
-                /* Set joystick position to base joystick position, when finger isn't on screen.
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_POINTER_UP: {
+                /* Set joystick position to base joystick position, when finger isn't on screen. */
                 x = joystickX;
                 y = joystickY;
-            } break;
+            }
+            break;
         }
 
-        /* Set joystick image at new position.
+        /* Set joystick image at new position. */
         imageJoystick1.setX(x - imageJoystick1.getWidth() / 2);
         imageJoystick1.setY(y - imageJoystick1.getHeight() / 2);
 
-        /* Calculate joystick axes. *
+        /* Calculate joystick axes. */
         dx = x - joystickX;
         dy = y - joystickY;
-        /* Normalize joystick axes. *
+        /* Normalize joystick axes. */
         dx /= joystickR;
         dy /= joystickR;
 
-        /* Update text with axes info. *
+        /* Update text with axes info. */
         textXY.setText(String.format(Locale.getDefault(), "x=%f y=%f ", dx, dy));
 
         return true;
-    }*/
+    }
 }
