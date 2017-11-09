@@ -24,4 +24,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Simulator" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Server IP address" />
+
+    <EditText
+        android:id="@+id/textIp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="192.168.1.1"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Server port number" />
+
+    <EditText
+        android:id="@+id/textPort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="55555"
+        android:inputType="numberSigned" />
+
+    <Button
+        android:id="@+id/buttonApply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apply Settings"
+        android:textAlignment="textStart" />
+
 </LinearLayout>

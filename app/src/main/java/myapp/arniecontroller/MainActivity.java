@@ -6,12 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
     Button buttonSimpleControl;
     Button buttonJoystickControl;
     Button buttonSimulator;
+    EditText editIp, editPort;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,15 @@ public class MainActivity extends AppCompatActivity {
 
         buttonSimulator = (Button) findViewById(R.id.buttonSimulator);
         buttonSimulator.setOnClickListener(buttonCallback);
+
+        editIp = (EditText) findViewById(R.id.textIp);
+        editIp.setText(Settings.ServerIp);
+
+        editPort = (EditText) findViewById(R.id.textPort);
+        editPort.setText(String.valueOf(Settings.ServerPort));
+
+        //Bluetooth bt = new Bluetooth(this);
+        //bt.Connect("SASHA");
     }
 
     /**
@@ -38,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
     private class ButtonCallback implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            // Save address settings if any button has been clicked.
+            Settings.ServerIp = editIp.getText().toString();
+            Settings.ServerPort = Integer.valueOf(editPort.getText().toString());
+            Log.i("Settings", "ServerIp="+Settings.ServerIp+", ServerPort="+Settings.ServerPort);
+
             switch (v.getId()) {
                 // Simple control button.
                 case R.id.buttonSimpleControl:

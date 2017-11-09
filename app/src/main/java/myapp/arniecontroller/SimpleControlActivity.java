@@ -52,6 +52,13 @@ public class SimpleControlActivity extends Activity {
 
         textView3 = (TextView) findViewById(R.id.textView3);
         textView3.setText("0");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Wifi.Connect(Settings.ServerIp, Settings.ServerPort);
+            }
+        }).start();
     }
 
     /**
@@ -82,6 +89,15 @@ public class SimpleControlActivity extends Activity {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
+            final int a1 = seekbar.getProgress();
+            final int a2 = seekbar2.getProgress();
+            final int a3 = seekbar3.getProgress();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Wifi.Send(new FrameAngles(a1, a2, a3));
+                }
+            }).start();
         }
     }
 }

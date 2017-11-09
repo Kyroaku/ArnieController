@@ -5,45 +5,45 @@ package myapp.arniecontroller;
  */
 
 public class FrameAngles extends Frame {
-    byte[] mAngles;
+    short[] mAngles;
 
     // Constructors.
 
     public FrameAngles() {
-        this((byte)0, (byte)0, (byte)0);
+        this(0, 0, 0);
     }
-    public FrameAngles(byte angle1, byte angle2, byte angle3) {
+    public FrameAngles(int angle1, int angle2, int angle3) {
         mCommand = 123;
-        mAngles = new byte[] { angle1, angle2, angle3 };
+        mAngles = new short[] { (short)angle1, (short)angle2, (short)angle3 };
     }
 
     // Setters.
 
-    public void Angle1(byte angle) {
-        mAngles[0] = angle;
+    public void Angle1(int angle) {
+        mAngles[0] = (short)angle;
     }
-    public void Angle2(byte angle) {
-        mAngles[1] = angle;
+    public void Angle2(int angle) {
+        mAngles[1] = (short)angle;
     }
-    public void Angle3(byte angle) {
-        mAngles[2] = angle;
+    public void Angle3(int angle) {
+        mAngles[2] = (short)angle;
     }
-    public void Angles(byte angle1, byte angle2, byte angle3) {
-        mAngles[0] = angle1; mAngles[1] = angle2; mAngles[2] = angle3;
+    public void Angles(int angle1, int angle2, int angle3) {
+        mAngles[0] = (short)angle1; mAngles[1] = (short)angle2; mAngles[2] = (short)angle3;
     }
 
     // Getters.
 
-    public byte Angle1() {
+    public short Angle1() {
         return mAngles[0];
     }
-    public byte Angle2() {
+    public short Angle2() {
         return mAngles[1];
     }
-    public byte Angle3() {
+    public short Angle3() {
         return mAngles[2];
     }
-    public byte[] Angles() {
+    public short[] Angles() {
         return mAngles;
     }
 }

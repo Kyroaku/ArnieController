@@ -1,18 +1,12 @@
 package myapp.arniecontroller;
 
 import android.app.Activity;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.text.format.Formatter;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.util.Scanner;
 
 /**
  * Created by Marcin Dziedzic on 2017-10-26.
@@ -20,99 +14,79 @@ import java.util.Scanner;
 
 public class SimulatorActivity extends Activity {
 
-    EditText mTextToSend;
-    TextView mTextReceived;
-    Button mButtonSend;
-    Socket mSocket;
+    TextView mTextReceived, mTextAddress;
+    ImageView mImgServo[];
+
+    Thread mThreadReceive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simulator);
 
-        ButtonCallback buttonCallback = new ButtonCallback();
-
-        mTextToSend = (EditText)findViewById(R.id.textToSend);
+        mTextAddress = (TextView)findViewById(R.id.textAddress);
         mTextReceived = (TextView)findViewById(R.id.textReceived);
-        mButtonSend = (Button)findViewById(R.id.buttonSend);
-        mButtonSend.setOnClickListener(buttonCallback);
+
+        mImgServo = new ImageView[3];
+        mImgServo[0] = (ImageView) findViewById(R.id.imgServoHorn1);
+        mImgServo[1] = (ImageView) findViewById(R.id.imgServoHorn2);
+        mImgServo[2] = (ImageView) findViewById(R.id.imgServoHorn3);
+
+        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 
         // Open server and accept client.
-        WifiManager.OpenServer();
+        Thread openThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Wifi.OpenServer();
+            }
+        });
+        openThread.start();
+        try {
+            openThread.join();
+        } catch(Exception e) {
+            Log.e("Socket", "Open server error (" + e.getMessage() + ")");
+        }
+
+        mTextAddress.setText("Address: " + ip + ":" + Wifi.GetPort());
 
         // Create thread to receive data.
-        new Thread(new Runnable() {
+        mThreadReceive = new Thread(new Runnable() {
             @Override
             public void run() {
                 while(true) {
                     // Do nothint if not connected.
-                    if(!WifiManager.IsConnected()) {
+                    if(!Wifi.IsConnected()) {
                         try {
-                            Thread.sleep(1);
+                            Wifi.Accept();
                         } catch (Exception e) {
+                            Log.i("Socket", "Accept error (" + e.getMessage() + ")");
                         }
                         continue;
                     }
                     // If received data, update receveived text on layout.
-                    final FrameAngles frame = (FrameAngles)WifiManager.ReceiveObject();
+                    final Frame frame = (Frame) Wifi.ReceiveObject();
                     if(frame != null) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                String text = "Frame ==========\n";
-                                text += "Command=" + String.valueOf(frame.Command()) + "\n";
-                                text += "Angles=[" + String.valueOf(frame.Angle1()) + ", ";
-                                text += String.valueOf(frame.Angle2()) + ", ";
-                                text += String.valueOf(frame.Angle3()) + "]\n";
-                                text += "================\n";
-                                mTextReceived.setText(mTextReceived.getText() + text);
+                                mImgServo[0].setRotation(((FrameAngles)frame).Angle1()-45);
+                                mImgServo[1].setRotation(((FrameAngles)frame).Angle2()-45);
+                                mImgServo[2].setRotation(((FrameAngles)frame).Angle3()-45);
                             }
                         });
                     }
                 }
             }
-        }).start();
-
-        // Connect to server.
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mSocket = new Socket();
-                    mSocket.setReuseAddress(true);
-                    mSocket.connect(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), 1440));
-                } catch(Exception e) {
-                    Log.e("Socket", "Can't connect to server. " + "(" + e.getMessage() + ")");
-                }
-            }
-        }).start();
+        });
+        mThreadReceive.start();
     }
 
-    /**
-     * Callback class for all buttons in main menu.
-     */
-    private class ButtonCallback implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.buttonSend:
-                    // Send message from EditText.
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                FrameAngles frame = new FrameAngles();
-                                Scanner scan = new Scanner(mTextToSend.getText().toString());
-                                frame.Angles(scan.nextByte(), scan.nextByte(), scan.nextByte());
-                                ObjectOutputStream oos = new ObjectOutputStream(mSocket.getOutputStream());
-                                oos.writeObject(frame);
-                            } catch(Exception e) {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
-                            }
-                        }
-                    }).start();
-                    break;
-            }
-        }
+        //mThreadReceive.stop();
     }
 }
