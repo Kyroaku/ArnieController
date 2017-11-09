@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
+import static android.R.attr.x;
+
 /**
  * Created by Szymon on 21.10.2017.
  */
@@ -31,7 +33,7 @@ public class jostick_control extends Activity implements View.OnTouchListener {
         // Find views.
         textXY = (TextView) this.findViewById(R.id.textXY);
 
-        imageJoystick1 = (ImageView) this.findViewById(R.id.imageJoystick1);
+        //imageJoystick1 = (ImageView) this.findViewById(R.id.imageJoystick1);
 
         screenView = findViewById(R.id.joystickScreenView);
 
