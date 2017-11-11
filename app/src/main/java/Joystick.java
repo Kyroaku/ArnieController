@@ -1,9 +1,6 @@
-import android.app.Activity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-
-import myapp.arniecontroller.R;
 
 /**
  * Created by Szymon on 02.11.2017.
@@ -16,7 +13,8 @@ public class Joystick  {
     float joystickR = 100.0f;
         public Joystick ()
     {
-        imageJoystick1 = (ImageView) this.findViewById(R.id.imageJoystick1);
+        // Co ja kurwa mowilem o nie dzialajacym kodzie :o
+        //imageJoystick1 = (ImageView) this.findViewById(R.id.imageJoystick1);
     }
 
 

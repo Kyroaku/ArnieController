@@ -5,6 +5,6 @@ package myapp.arniecontroller;
  */
 
 public class Settings {
-    public static String ServerIp = "192.168.57.101";
+    public static String ServerIp = "192.168.1.103";
     public static int ServerPort = 55555;
 }

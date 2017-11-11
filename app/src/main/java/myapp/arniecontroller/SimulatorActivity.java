@@ -17,8 +17,6 @@ public class SimulatorActivity extends Activity {
     TextView mTextReceived, mTextAddress;
     ImageView mImgServo[];
 
-    Thread mThreadReceive;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,26 +44,22 @@ public class SimulatorActivity extends Activity {
         try {
             openThread.join();
         } catch(Exception e) {
-            Log.e("Socket", "Open server error (" + e.getMessage() + ")");
+            Log.e("Socket", "Open server thread error (" + e.getMessage() + ")");
         }
 
         mTextAddress.setText("Address: " + ip + ":" + Wifi.GetPort());
 
         // Create thread to receive data.
-        mThreadReceive = new Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true) {
-                    // Do nothint if not connected.
+                while(Wifi.IsServerOpen()) {
+                    // Wait for client, if no one is connected.
                     if(!Wifi.IsConnected()) {
-                        try {
-                            Wifi.Accept();
-                        } catch (Exception e) {
-                            Log.i("Socket", "Accept error (" + e.getMessage() + ")");
-                        }
+                        Wifi.Accept();
                         continue;
                     }
-                    // If received data, update receveived text on layout.
+                    // If received data, update servomechanisms angles.
                     final Frame frame = (Frame) Wifi.ReceiveObject();
                     if(frame != null) {
                         runOnUiThread(new Runnable() {
@@ -78,15 +72,15 @@ public class SimulatorActivity extends Activity {
                         });
                     }
                 }
+                Log.d("Socket", "Receive thread closed");
             }
-        });
-        mThreadReceive.start();
+        }).start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        //mThreadReceive.stop();
+        Wifi.Close();
     }
 }

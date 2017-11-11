@@ -81,14 +81,7 @@ public class SimpleControlActivity extends Activity {
                     textView3.setText(String.format(Locale.getDefault(), "%d", progress));
                     break;
             }
-        }
 
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
             final int a1 = seekbar.getProgress();
             final int a2 = seekbar2.getProgress();
             final int a3 = seekbar3.getProgress();
@@ -99,5 +92,20 @@ public class SimpleControlActivity extends Activity {
                 }
             }).start();
         }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Wifi.Close();
     }
 }
