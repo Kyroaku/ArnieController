@@ -1,3 +1,5 @@
+package myapp.arniecontroller;
+
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,7 +13,7 @@ public class Joystick  {
     float joystickX = 0;
     float joystickY = 0;
     float joystickR = 100.0f;
-        public Joystick ()
+    public Joystick ()
     {
         // Co ja kurwa mowilem o nie dzialajacym kodzie :o
         //imageJoystick1 = (ImageView) this.findViewById(R.id.imageJoystick1);
@@ -23,8 +25,8 @@ public class Joystick  {
     public void SetXY (float joystickX, float joystickY)
     {
           /* Set joystick position to base joystick position, when finger isn't on screen. */
-       float x = joystickX;
-       float y = joystickY;
+        float x = joystickX;
+        float y = joystickY;
     }
 
 
@@ -70,7 +72,7 @@ public class Joystick  {
         dy /= joystickR;
 
         /* Update text with axes info. */
-       // textXY.setText(String.format(Locale.getDefault(), "x=%f y=%f ", dx, dy));
+        // textXY.setText(String.format(Locale.getDefault(), "x=%f y=%f ", dx, dy));
 
         return true;
     }

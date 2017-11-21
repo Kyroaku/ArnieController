@@ -11,13 +11,11 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
-import static android.R.attr.x;
-
 /**
  * Created by Szymon on 21.10.2017.
  */
 
-public class jostick_control extends Activity implements View.OnTouchListener {
+public class JoystickControlActivity extends Activity implements View.OnTouchListener {
     float joystickX = 0;
     float joystickY = 0;
     float joystickR = 100.0f;

@@ -2,9 +2,13 @@ package myapp.arniecontroller;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static myapp.arniecontroller.R.id.seekBar;
@@ -21,6 +25,8 @@ public class SimpleControlActivity extends Activity {
     TextView textView;
     TextView textView2;
     TextView textView3;
+    Spinner spinnerMoveSequences;
+    List<MoveSequence>moveSequences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +35,16 @@ public class SimpleControlActivity extends Activity {
 
         // Create callback for all seek bars.
         SeekBar.OnSeekBarChangeListener seekBarCallback = new SeekBarCallback();
+
+        moveSequences = new ArrayList<>();
+        moveSequences.add(new MoveSequence("Sequence 1"));
+
+        spinnerMoveSequences = (Spinner)findViewById(R.id.spinnerMoveSequences);
+        ArrayAdapter<MoveSequence> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, moveSequences
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerMoveSequences.setAdapter(adapter);
 
         // Set callback to each seek bar.
         seekbar = (SeekBar) findViewById(seekBar);
@@ -59,6 +75,13 @@ public class SimpleControlActivity extends Activity {
                 Wifi.Connect(Settings.ServerIp, Settings.ServerPort);
             }
         }).start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Wifi.Close();
     }
 
     /**
@@ -100,12 +123,5 @@ public class SimpleControlActivity extends Activity {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        Wifi.Close();
     }
 }
