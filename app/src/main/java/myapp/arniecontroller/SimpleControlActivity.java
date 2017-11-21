@@ -39,7 +39,7 @@ public class SimpleControlActivity extends Activity {
         moveSequences = new ArrayList<>();
         moveSequences.add(new MoveSequence("Sequence 1"));
 
-        spinnerMoveSequences = (Spinner)findViewById(R.id.spinnerMoveSequences);
+        spinnerMoveSequences = (Spinner)findViewById(R.id.spinner);
         ArrayAdapter<MoveSequence> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, moveSequences
         );
