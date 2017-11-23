@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 // Simple control button.
                 case R.id.buttonSimpleControl:
                     try {
+                        MoveSequence.ResetNumInstances();
                         startActivity(new Intent(MainActivity.this, SimpleControlActivity.class));
                     }
                     catch(Exception e) {

@@ -126,6 +126,8 @@ public class Wifi {
             Log.e("Socket", "Send error (" + e.getMessage() + ")");
             e.printStackTrace();
             CloseClient();
+        } catch (Exception e) {
+            Log.e("Socket", "Send error (" + e.getMessage() + ")");
         }
     }
 

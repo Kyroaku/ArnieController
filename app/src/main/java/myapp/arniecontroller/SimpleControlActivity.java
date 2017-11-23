@@ -2,7 +2,11 @@ package myapp.arniecontroller;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -19,55 +23,95 @@ import static myapp.arniecontroller.R.id.seekBar;
 
 public class SimpleControlActivity extends Activity {
 
-    SeekBar seekbar;
-    SeekBar seekbar2;
-    SeekBar seekbar3;
-    TextView textView;
-    TextView textView2;
-    TextView textView3;
-    Spinner spinnerMoveSequences;
-    List<MoveSequence>moveSequences;
+    SeekBar mBarAngle1;
+    SeekBar mBarAngle2;
+    SeekBar mBarAngle3;
+    TextView mTextAngle1;
+    TextView mTextAngle2;
+    TextView mTextAngle3;
+
+    Spinner mSpinnerMoveSequences;
+    ListView mListMoves;
+    Button mButtonStartSeq, mButtonAddSeq, mButtonDelSeq, mButtonAddMove, mButtonDelMove;
+
+    List<MoveSequence> mMoveSequences;
+    Thread mThreadMoveSequence;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_control);
 
-        // Create callback for all seek bars.
+        /* Create callback for all seek bars. */
         SeekBar.OnSeekBarChangeListener seekBarCallback = new SeekBarCallback();
+        /* Create callback for all buttons. */
+        Button.OnClickListener buttonCallback = new ButtonCallback();
+        /* Create callback for all lists. */
+        AdapterView.OnItemSelectedListener itemSelectedCallback = new ItemSelectedCallback();
+        /* Create callback for all lists. */
+        AdapterView.OnItemClickListener itemClickCallback = new ItemClickCallback();
 
-        moveSequences = new ArrayList<>();
-        moveSequences.add(new MoveSequence("Sequence 1"));
+        /* Create first sequence with first move. */
+        mMoveSequences = new ArrayList<>();
+        mMoveSequences.add(new MoveSequence());
+        mMoveSequences.get(0).Add();
+        mMoveSequences.get(0).Select(0);
 
-        spinnerMoveSequences = (Spinner)findViewById(R.id.spinner);
-        ArrayAdapter<MoveSequence> adapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, moveSequences
+        /* Set move sequences spinner. */
+        mSpinnerMoveSequences = (Spinner)findViewById(R.id.spinnerMoveSequences);
+        ArrayAdapter<MoveSequence> sequencesAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, mMoveSequences
         );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerMoveSequences.setAdapter(adapter);
+        sequencesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerMoveSequences.setAdapter(sequencesAdapter);
+        mSpinnerMoveSequences.setOnItemSelectedListener(itemSelectedCallback);
 
-        // Set callback to each seek bar.
-        seekbar = (SeekBar) findViewById(seekBar);
-        seekbar.setMax(180);
-        seekbar.setOnSeekBarChangeListener(seekBarCallback);
+        /* Set moves list. */
+        mListMoves = (ListView)findViewById(R.id.listMoves);
+        ArrayAdapter<MoveSequence.Element> movesAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_list_item_1, mMoveSequences.get(0).GetList()
+        );
+        mListMoves.setAdapter(movesAdapter);
+        mListMoves.setOnItemClickListener(itemClickCallback);
 
-        seekbar2 = (SeekBar) findViewById(R.id.seekBar2);
-        seekbar2.setMax(180);
-        seekbar2.setOnSeekBarChangeListener(seekBarCallback);
+        /* Set callback to each button. */
+        mButtonStartSeq = (Button)findViewById(R.id.buttonStartSequence);
+        mButtonStartSeq.setOnClickListener(buttonCallback);
 
-        seekbar3 = (SeekBar) findViewById(R.id.seekBar3);
-        seekbar3.setMax(180);
-        seekbar3.setOnSeekBarChangeListener(seekBarCallback);
+        mButtonAddSeq = (Button)findViewById(R.id.buttonAddSequence);
+        mButtonAddSeq.setOnClickListener(buttonCallback);
 
-        // Init text views.
-        textView = (TextView) findViewById(R.id.textView);
-        textView.setText("0");
+        mButtonDelSeq = (Button)findViewById(R.id.buttonDelSequence);
+        mButtonDelSeq.setOnClickListener(buttonCallback);
 
-        textView2 = (TextView) findViewById(R.id.textView2);
-        textView2.setText("0");
+        mButtonAddMove = (Button)findViewById(R.id.buttonAddMove);
+        mButtonAddMove.setOnClickListener(buttonCallback);
 
-        textView3 = (TextView) findViewById(R.id.textView3);
-        textView3.setText("0");
+        mButtonDelMove = (Button)findViewById(R.id.buttonDelMove);
+        mButtonDelMove.setOnClickListener(buttonCallback);
+
+        /* Set callback to each seek bar. */
+        mBarAngle1 = (SeekBar) findViewById(seekBar);
+        mBarAngle1.setMax(180);
+        mBarAngle1.setOnSeekBarChangeListener(seekBarCallback);
+
+        mBarAngle2 = (SeekBar) findViewById(R.id.seekBar2);
+        mBarAngle2.setMax(180);
+        mBarAngle2.setOnSeekBarChangeListener(seekBarCallback);
+
+        mBarAngle3 = (SeekBar) findViewById(R.id.seekBar3);
+        mBarAngle3.setMax(180);
+        mBarAngle3.setOnSeekBarChangeListener(seekBarCallback);
+
+        /* Init text views. */
+        mTextAngle1 = (TextView) findViewById(R.id.textView);
+        mTextAngle1.setText("0");
+
+        mTextAngle2 = (TextView) findViewById(R.id.textView2);
+        mTextAngle2.setText("0");
+
+        mTextAngle3 = (TextView) findViewById(R.id.textView3);
+        mTextAngle3.setText("0");
 
         new Thread(new Runnable() {
             @Override
@@ -87,33 +131,44 @@ public class SimpleControlActivity extends Activity {
     /**
      * Callback class for all seek bars in simple control.
      */
-    private class SeekBarCallback implements SeekBar.OnSeekBarChangeListener
-    {
+    private class SeekBarCallback implements SeekBar.OnSeekBarChangeListener {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            switch (seekBar.getId()) {
-                case R.id.seekBar:
-                    textView.setText(String.format(Locale.getDefault(), "%d", progress));
-                    break;
-
-                case R.id.seekBar2:
-                    textView2.setText(String.format(Locale.getDefault(), "%d", progress));
-                    break;
-
-                case R.id.seekBar3:
-                    textView3.setText(String.format(Locale.getDefault(), "%d", progress));
-                    break;
-            }
-
-            final int a1 = seekbar.getProgress();
-            final int a2 = seekbar2.getProgress();
-            final int a3 = seekbar3.getProgress();
+            /* Send angles. */
+            final int a1 = mBarAngle1.getProgress();
+            final int a2 = mBarAngle2.getProgress();
+            final int a3 = mBarAngle3.getProgress();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     Wifi.Send(new FrameAngles(a1, a2, a3));
                 }
             }).start();
+
+            /* Update UI. */
+            MoveSequence seq = (MoveSequence) mSpinnerMoveSequences.getSelectedItem();
+
+            switch (seekBar.getId()) {
+                case R.id.seekBar:
+                    mTextAngle1.setText(String.format(Locale.getDefault(), "%d", progress));
+                    if(seq.GetSelectedItem() != null)
+                        seq.GetSelectedItem().SetAngle(0, (short) progress);
+                break;
+
+                case R.id.seekBar2:
+                    mTextAngle2.setText(String.format(Locale.getDefault(), "%d", progress));
+                    if(seq.GetSelectedItem() != null)
+                        seq.GetSelectedItem().SetAngle(1, (short) progress);
+                break;
+
+                case R.id.seekBar3:
+                    mTextAngle3.setText(String.format(Locale.getDefault(), "%d", progress));
+                    if(seq.GetSelectedItem() != null)
+                        seq.GetSelectedItem().SetAngle(2, (short) progress);
+                break;
+            }
+
+            mListMoves.setAdapter(mListMoves.getAdapter());
         }
 
         @Override
@@ -122,6 +177,116 @@ public class SimpleControlActivity extends Activity {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
+        }
+    }
+
+    /**
+     * Callback class for all buttons in simple control.
+     */
+    private class ButtonCallback implements Button.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            switch(v.getId()) {
+                case R.id.buttonStartSequence: {
+                    /* Break, if move sequence thread is already working. */
+                    if(mThreadMoveSequence != null && mThreadMoveSequence.isAlive())
+                        break;
+
+                    final MoveSequence sequence = (MoveSequence)mSpinnerMoveSequences.getSelectedItem();
+                    mThreadMoveSequence = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for(MoveSequence.Element e : sequence.GetList()) {
+                                Wifi.Send(new FrameAngles(e.Angle(0), e.Angle(1), e.Angle(2)));
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mButtonStartSeq.setEnabled(true);
+                                }
+                            });
+                        }
+                    });
+                    mThreadMoveSequence.start();
+                    mButtonStartSeq.setEnabled(false);
+                } break;
+
+                case R.id.buttonAddSequence:
+                    mMoveSequences.add(new MoveSequence());
+                    break;
+
+                case R.id.buttonDelSequence:
+                    break;
+
+                case R.id.buttonAddMove:
+                    /* Get selected sequence. */
+                    MoveSequence seq = (MoveSequence)mSpinnerMoveSequences.getSelectedItem();
+                    /* Add move to selected sequence. */
+                    seq.Add(
+                            (short)mBarAngle1.getProgress(),
+                            (short)mBarAngle2.getProgress(),
+                            (short)mBarAngle3.getProgress()
+                    );
+                    seq.Select(seq.GetList().size()-1);
+                    /* Tricky update of list view. */
+                    mListMoves.setAdapter(mListMoves.getAdapter());
+                    break;
+
+                case R.id.buttonDelMove:
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Callback class for all lists in simple control.
+     */
+    private class ItemSelectedCallback implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            switch(parent.getId()) {
+                case R.id.spinnerMoveSequences: {
+                    /* Get selected move sequence. */
+                    MoveSequence e = (MoveSequence) mSpinnerMoveSequences.getAdapter().getItem(position);
+                    /* Update list view with moves from selected sequence. */
+                    mListMoves.setAdapter(new ArrayAdapter<MoveSequence.Element>(
+                            getApplicationContext(), android.R.layout.simple_list_item_1, e.GetList()
+                    ));
+                } break;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    }
+
+    /**
+     * Callback class for all lists in simple control.
+     */
+    private class ItemClickCallback implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            switch(parent.getId()) {
+                case R.id.listMoves: {
+                    MoveSequence seq = (MoveSequence) mSpinnerMoveSequences.getSelectedItem();
+                    seq.Select(position);
+                    mBarAngle1.setProgress(seq.GetSelectedItem().Angle(0));
+                    mBarAngle2.setProgress(seq.GetSelectedItem().Angle(1));
+                    mBarAngle3.setProgress(seq.GetSelectedItem().Angle(2));
+                    /* Tricky update of list view. */
+                    mListMoves.setAdapter(mListMoves.getAdapter());
+                } break;
+            }
         }
     }
 }
