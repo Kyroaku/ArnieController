@@ -186,6 +186,8 @@ public class SimpleControlActivity extends Activity {
     private class ButtonCallback implements Button.OnClickListener {
         @Override
         public void onClick(View v) {
+             /* Get selected sequence. */
+            MoveSequence seq = (MoveSequence)mSpinnerMoveSequences.getSelectedItem();
             switch(v.getId()) {
                 case R.id.buttonStartSequence: {
                     /* Break, if move sequence thread is already working. */
@@ -221,11 +223,12 @@ public class SimpleControlActivity extends Activity {
                     break;
 
                 case R.id.buttonDelSequence:
+                    if(mSpinnerMoveSequences.getSelectedItemId() >= 0)
+                        mMoveSequences.remove(mSpinnerMoveSequences.getSelectedItemId());
+                    mSpinnerMoveSequences.setAdapter(mSpinnerMoveSequences.getAdapter());
                     break;
 
                 case R.id.buttonAddMove:
-                    /* Get selected sequence. */
-                    MoveSequence seq = (MoveSequence)mSpinnerMoveSequences.getSelectedItem();
                     /* Add move to selected sequence. */
                     seq.Add(
                             (short)mBarAngle1.getProgress(),
@@ -238,6 +241,8 @@ public class SimpleControlActivity extends Activity {
                     break;
 
                 case R.id.buttonDelMove:
+                    seq.Remove();
+                    mListMoves.setAdapter(mListMoves.getAdapter());
                     break;
 
                 default:
