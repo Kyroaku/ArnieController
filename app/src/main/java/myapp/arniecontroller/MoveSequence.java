@@ -27,6 +27,10 @@ public class MoveSequence {
     public void Add() {
         mSequence.add(new Element());
     }
+    public void Remove(){
+        if(GetSelectedItem() != null)
+            mSequence.remove(GetSelectedItem());
+    }
     public void Add(short a1, short a2, short a3) {
         mSequence.add(new Element(a1, a2, a3));
     }
