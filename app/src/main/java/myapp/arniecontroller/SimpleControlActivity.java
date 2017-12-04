@@ -23,6 +23,7 @@ import static myapp.arniecontroller.R.id.seekBar;
 
 public class SimpleControlActivity extends Activity {
 
+
     SeekBar mBarAngle1;
     SeekBar mBarAngle2;
     SeekBar mBarAngle3;
@@ -134,14 +135,24 @@ public class SimpleControlActivity extends Activity {
     private class SeekBarCallback implements SeekBar.OnSeekBarChangeListener {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+           final byte tab[]= new byte[6];
+
             /* Send angles. */
             final int a1 = mBarAngle1.getProgress();
             final int a2 = mBarAngle2.getProgress();
             final int a3 = mBarAngle3.getProgress();
+
+            tab[0]=(byte)a1;
+            tab[1]=(byte)(a1 >>> 8);
+            tab[2]=(byte)a2;
+            tab[3]=(byte)(a2 >>> 8);
+            tab[4]=(byte)a3;
+            tab[5]=(byte)(a3 >>> 8);
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Wifi.Send(new FrameAngles(a1, a2, a3));
+                    Wifi.Send(tab);
                 }
             }).start();
 
@@ -226,6 +237,7 @@ public class SimpleControlActivity extends Activity {
                     if(mSpinnerMoveSequences.getSelectedItemId() >= 0)
                         mMoveSequences.remove(mSpinnerMoveSequences.getSelectedItemId());
                     mSpinnerMoveSequences.setAdapter(mSpinnerMoveSequences.getAdapter());
+                    //hjyhjhjh
                     break;
 
                 case R.id.buttonAddMove:

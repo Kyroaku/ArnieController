@@ -48,7 +48,7 @@ public class SimulatorActivity extends Activity {
         }
 
         mTextAddress.setText("Address: " + ip + ":" + Wifi.GetPort());
-
+        final byte tab[]=new byte[6];
         // Create thread to receive data.
         new Thread(new Runnable() {
             @Override
@@ -59,8 +59,16 @@ public class SimulatorActivity extends Activity {
                         Wifi.Accept();
                         continue;
                     }
+                    Wifi.Receive(tab);
+                    int move=tab[0]|(tab[1] << 8);
+                    int move1=tab[2]|(tab[3] << 8);
+                    int move2=tab[4]|(tab[5] << 8);
+
+                    mImgServo[0].setRotation( move-45);
+                    mImgServo[1].setRotation( move1-45);
+                    mImgServo[2].setRotation(move2-45);
                     // If received data, update servomechanisms angles.
-                    final Frame frame = (Frame) Wifi.ReceiveObject();
+                   /* final Frame frame = (Frame) Wifi.ReceiveObject();
                     if(frame != null) {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -70,7 +78,7 @@ public class SimulatorActivity extends Activity {
                                 mImgServo[2].setRotation(((FrameAngles)frame).Angle3()-45);
                             }
                         });
-                    }
+                    }*/
                 }
                 Log.d("Socket", "Receive thread closed");
             }
