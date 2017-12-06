@@ -60,10 +60,12 @@ public class SimulatorActivity extends Activity {
                         continue;
                     }
                     Wifi.Receive(tab);
-                    int move=tab[0]|(tab[1] << 8);
-                    int move1=tab[2]|(tab[3] << 8);
-                    int move2=tab[4]|(tab[5] << 8);
-
+                    int move=(int)tab[0]|((int)tab[1] << 8);
+                    int move1=(int)tab[2]|((int)tab[3] << 8);
+                    int move2=(int)tab[4]|((int)tab[5] << 8);
+                    Log.e("Socket", "move0= (" +move);
+                    Log.e("Socket", "move1= (" +move1);
+                    Log.e("Socket", "move2= (" +move2);
                     mImgServo[0].setRotation( move-45);
                     mImgServo[1].setRotation( move1-45);
                     mImgServo[2].setRotation(move2-45);
