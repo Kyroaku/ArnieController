@@ -135,26 +135,20 @@ public class SimpleControlActivity extends Activity {
     private class SeekBarCallback implements SeekBar.OnSeekBarChangeListener {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-           final byte tab[]= new byte[6];
-
             /* Send angles. */
             final int a1 = mBarAngle1.getProgress();
             final int a2 = mBarAngle2.getProgress();
             final int a3 = mBarAngle3.getProgress();
+            final FrameAngles frame = new FrameAngles(a1, a2, a3);
 
-            tab[0]=(byte)a1;
-            tab[1]=(byte)(a1 >>> 8);
-            tab[2]=(byte)a2;
-            tab[3]=(byte)(a2 >>> 8);
-            tab[4]=(byte)a3;
-            tab[5]=(byte)(a3 >>> 8);
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Wifi.Send(tab);
-                }
-            }).start();
+            if(fromUser) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Wifi.Send(frame.ToByteArray());
+                    }
+                }).start();
+            }
 
             /* Update UI. */
             MoveSequence seq = (MoveSequence) mSpinnerMoveSequences.getSelectedItem();
@@ -197,7 +191,6 @@ public class SimpleControlActivity extends Activity {
     private class ButtonCallback implements Button.OnClickListener {
         @Override
         public void onClick(View v) {
-            final byte tab[]=new byte[6];
              /* Get selected sequence. */
             MoveSequence seq = (MoveSequence)mSpinnerMoveSequences.getSelectedItem();
             switch(v.getId()) {
@@ -211,22 +204,12 @@ public class SimpleControlActivity extends Activity {
                         @Override
                         public void run() {
                             for(MoveSequence.Element e : sequence.GetList()) {
-                                final int a1 = e.Angle(0);
-                                final int a2 = e.Angle(1);
-                                final int a3 = e.Angle(2);
-
-                                tab[0]=(byte)a1;
-                                tab[1]=(byte)(a1 >>> 8);
-                                tab[2]=(byte)a2;
-                                tab[3]=(byte)(a2 >>> 8);
-                                tab[4]=(byte)a3;
-                                tab[5]=(byte)(a3 >>> 8);
-
-                                Wifi.Send(tab);
+                                FrameAngles frame = new FrameAngles(e.Angle(0), e.Angle(1), e.Angle(2));
+                                Wifi.Send(frame.ToByteArray());
                                 //e.SetAngle(e.Angle(2),(short) move2);Wifi.Send(tab);
                                 //Wifi.Send(new FrameAngles(e.Angle(0), e.Angle(1), e.Angle(2)));
                                 try {
-                                    Thread.sleep(500);
+                                    Thread.sleep(1000);
                                 } catch (InterruptedException e1) {
                                     e1.printStackTrace();
                                 }
@@ -309,8 +292,23 @@ public class SimpleControlActivity extends Activity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             switch(parent.getId()) {
                 case R.id.listMoves: {
+                    /* Get selected move sequence. */
                     MoveSequence seq = (MoveSequence) mSpinnerMoveSequences.getSelectedItem();
+                    /* Select clicked item. */
                     seq.Select(position);
+                    /* Send selected move. */
+                    final FrameAngles frame = new FrameAngles(
+                            seq.GetSelectedItem().Angle(0),
+                            seq.GetSelectedItem().Angle(1),
+                            seq.GetSelectedItem().Angle(2)
+                    );
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Wifi.Send(frame.ToByteArray());
+                        }
+                    }).start();
+                    /* Update values. */
                     mBarAngle1.setProgress(seq.GetSelectedItem().Angle(0));
                     mBarAngle2.setProgress(seq.GetSelectedItem().Angle(1));
                     mBarAngle3.setProgress(seq.GetSelectedItem().Angle(2));

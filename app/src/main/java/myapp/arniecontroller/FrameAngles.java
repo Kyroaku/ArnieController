@@ -46,4 +46,17 @@ public class FrameAngles extends Frame {
     public short[] Angles() {
         return mAngles;
     }
+
+    // Others.
+
+    public byte[] ToByteArray() {
+        byte[] array = new byte[6];
+        array[0]=(byte)mAngles[0];
+        array[1]=(byte)(mAngles[0] >>> 8);
+        array[2]=(byte)mAngles[1];
+        array[3]=(byte)(mAngles[1] >>> 8);
+        array[4]=(byte)mAngles[2];
+        array[5]=(byte)(mAngles[2] >>> 8);
+        return array;
+    }
 }
