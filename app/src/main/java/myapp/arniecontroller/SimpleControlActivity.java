@@ -197,6 +197,7 @@ public class SimpleControlActivity extends Activity {
     private class ButtonCallback implements Button.OnClickListener {
         @Override
         public void onClick(View v) {
+            final byte tab[]=new byte[6];
              /* Get selected sequence. */
             MoveSequence seq = (MoveSequence)mSpinnerMoveSequences.getSelectedItem();
             switch(v.getId()) {
@@ -210,7 +211,20 @@ public class SimpleControlActivity extends Activity {
                         @Override
                         public void run() {
                             for(MoveSequence.Element e : sequence.GetList()) {
-                                Wifi.Send(new FrameAngles(e.Angle(0), e.Angle(1), e.Angle(2)));
+                                final int a1 = e.Angle(0);
+                                final int a2 = e.Angle(1);
+                                final int a3 = e.Angle(2);
+
+                                tab[0]=(byte)a1;
+                                tab[1]=(byte)(a1 >>> 8);
+                                tab[2]=(byte)a2;
+                                tab[3]=(byte)(a2 >>> 8);
+                                tab[4]=(byte)a3;
+                                tab[5]=(byte)(a3 >>> 8);
+
+                                Wifi.Send(tab);
+                                //e.SetAngle(e.Angle(2),(short) move2);Wifi.Send(tab);
+                                //Wifi.Send(new FrameAngles(e.Angle(0), e.Angle(1), e.Angle(2)));
                                 try {
                                     Thread.sleep(500);
                                 } catch (InterruptedException e1) {
