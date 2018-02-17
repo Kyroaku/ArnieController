@@ -17,7 +17,7 @@ public class FrameAngles extends Frame {
         mAngles = new short[] { (short)angle1, (short)angle2, (short)angle3 };
     }
 
-    // Setters.
+    // Setters..
 
     public void Angle1(int angle) {
         mAngles[0] = (short)angle;
