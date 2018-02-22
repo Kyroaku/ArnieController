@@ -68,13 +68,13 @@ public class MainActivity extends AppCompatActivity {
 
                 // Joystick control button.
                 case R.id.buttonJoystickControl:
-                    //Toast.makeText(getApplicationContext(), "Not implemented!", Toast.LENGTH_SHORT).show();
                     try {
-                        startActivity(new Intent(MainActivity.this, JoystickControlActivity.class));
+                        startActivity(new Intent(MainActivity.this, JoystickActivity.class));
                     }
-                    catch(Exception e) {
-                        Log.e("startActivity()", e.getMessage());
+                    catch (Exception e) {
+                        Log.e("startActivity()", e.getMessage()) ;
                     }
+
                     break;
 
                 // Simulator button.

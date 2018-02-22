@@ -24,15 +24,17 @@
 
         <activity
             android:name=".SimpleControlActivity"
-            android:label="@string/app_name" >
+            android:label="ArnieController" >
         </activity>
-        <activity
-            android:name=".JoystickControlActivity"
-            android:label="@string/app_name" >
-        </activity>
+
         <activity
             android:name=".SimulatorActivity"
-            android:label="@string/app_name" >
+            android:label="ArnieController" >
+        </activity>
+
+        <activity
+            android:name=".JoystickActivity"
+            android:label="ArnieController" >
         </activity>
 
     </application>
