@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 
@@ -16,6 +17,7 @@ public class JoystickActivity extends Activity implements JoystickView.JoystickL
     private TextView powerTextView;
     private TextView directionTextView;
     private JoystickView joystick;
+    private SliderView slider;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,7 +27,8 @@ public class JoystickActivity extends Activity implements JoystickView.JoystickL
         powerTextView = (TextView) findViewById(R.id.powerTextView);
         angleTextView.setText(getString(R.string.joy_contr_text1) + " 0");
         powerTextView.setText(getString(R.string.joy_contr_text2) + " 0");
-        JoystickView joystickView = new JoystickView(this);
+        //JoystickView joystickView = new JoystickView(this);
+        //SliderView sliderView = new SliderView(this);
 
     }
 
