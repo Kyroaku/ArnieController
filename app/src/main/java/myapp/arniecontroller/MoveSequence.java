@@ -31,8 +31,8 @@ public class MoveSequence {
         if(GetSelectedItem() != null)
             mSequence.remove(GetSelectedItem());
     }
-    public void Add(short a1, short a2, short a3) {
-        mSequence.add(new Element(a1, a2, a3));
+    public void Add(short a1, short a2, short a3, short a4) {
+        mSequence.add(new Element(a1, a2, a3, a4));
     }
     public List<Element> GetList() {
         return mSequence;
@@ -60,10 +60,10 @@ public class MoveSequence {
         boolean mIsSelected;
 
         public Element() {
-           this((short)0, (short)0, (short)0);
+           this((short)0, (short)0, (short)0, (short)0);
         }
-        public Element(short a1, short a2, short a3) {
-            mAngles = new short[]{ a1, a2, a3 };
+        public Element(short a1, short a2, short a3, short a4) {
+            mAngles = new short[]{ a1, a2, a3, a4 };
         }
 
         public void SetAngle(int angleId, short angle) {
@@ -82,9 +82,9 @@ public class MoveSequence {
 
         public String toString() {
             if(IsSelected())
-                return "-> [" + mAngles[0] + ", " + mAngles[1] + ", " + mAngles[2] + "]";
+                return "-> [" + mAngles[0] + ", " + mAngles[1] + ", " + mAngles[2] + ", " + mAngles[3] + "]";
             else
-                return "[" + mAngles[0] + ", " + mAngles[1] + ", " + mAngles[2] + "]";
+                return "[" + mAngles[0] + ", " + mAngles[1] + ", " + mAngles[2] + ", " + mAngles[3] + "]";
         }
     }
 }

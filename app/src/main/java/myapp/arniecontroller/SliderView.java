@@ -23,30 +23,49 @@ public class SliderView extends SurfaceView implements SurfaceHolder.Callback, V
     private float centerY;
     private float sliderRadius;
     private static float DISPLAYSCALE = 6;
+    private SliderListener slideListener;
+
+    public interface SliderListener
+    {
+        public void onSliderMoved(float xPercent, float yPercent, int source);
+    }
 
 
     public SliderView(Context context) {
         super(context);
         getHolder().addCallback(this);
         setOnTouchListener(this);
+        if(context instanceof SliderListener)
+        {
+            slideListener = (SliderListener) context;
+        }
     }
 
     public SliderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getHolder().addCallback(this);
         setOnTouchListener(this);
+        setOnTouchListener(this);
+        if(context instanceof SliderListener)
+        {
+            slideListener = (SliderListener) context;
+        }
     }
 
     public SliderView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         getHolder().addCallback(this);
         setOnTouchListener(this);
+        setOnTouchListener(this);
+        if(context instanceof SliderListener)
+        {
+            slideListener = (SliderListener) context;
+        }
     }
 
     private void drawSlider(float newX, float newY){
 
         if(getHolder().getSurface().isValid()) {
-
             Canvas myCanvas = this.getHolder().lockCanvas();
             Paint colors = new Paint();
             myCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
@@ -56,7 +75,6 @@ public class SliderView extends SurfaceView implements SurfaceHolder.Callback, V
             colors.setARGB(255,0,0,255); // Color of joystick itself
             myCanvas.drawCircle(newX, newY, sliderRadius, colors); // Draw the joystick hat
             getHolder().unlockCanvasAndPost(myCanvas); // Write the new draving to the SurfaceView
-
         }
 
     }
@@ -65,15 +83,13 @@ public class SliderView extends SurfaceView implements SurfaceHolder.Callback, V
         sliderX = getWidth()/ DISPLAYSCALE;
         centerX = getWidth()/2;
         sliderY = getHeight()/DISPLAYSCALE;
-        centerY = getWidth()/2;
+        centerY = getHeight()/2;
         sliderRadius = Math.min(getWidth(), getHeight())/7;
     }
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-
         setupDimensions();
         drawSlider(centerX,centerY);
-
     }
 
     @Override
@@ -92,36 +108,34 @@ public class SliderView extends SurfaceView implements SurfaceHolder.Callback, V
             {
                 float constrainedX;
                 float constrainedY;
-                if(e.getX() < sliderX)
-                {
+
+                if(e.getX() < sliderX) {
                     constrainedX = sliderX;
                 }
-                else if (e.getX() > sliderX * 5){
-
+                else if (e.getX() > sliderX * 5) {
                     constrainedX = sliderX * 5;
-
                 }
-                else{
+                else {
                     constrainedX = e.getX();
                 }
 
-                if(e.getY() < sliderY)
-                {
+
+                if(e.getY() < sliderY) {
                     constrainedY = sliderY;
                 }
                 else if (e.getY() > sliderY * 5){
-
                     constrainedY = sliderY * 5;
-
                 }
-                else{
+                else {
                     constrainedY = e.getY();
                 }
 
                 drawSlider(constrainedX, constrainedY);
+                slideListener.onSliderMoved((e.getX()-centerX) / (sliderX / 4),(e.getY()-centerY) / (sliderY / 4),getId());
             }
             else{
-                drawSlider(centerX,centerY);
+                //drawSlider(centerX,centerY);
+                //slideListener.onSliderMoved(e.getX(),e.getY(),getId());
             }
         }
 

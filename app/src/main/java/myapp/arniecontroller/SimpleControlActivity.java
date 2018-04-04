@@ -27,9 +27,11 @@ public class SimpleControlActivity extends Activity {
     SeekBar mBarAngle1;
     SeekBar mBarAngle2;
     SeekBar mBarAngle3;
+    SeekBar mBarAngle4;
     TextView mTextAngle1;
     TextView mTextAngle2;
     TextView mTextAngle3;
+    TextView mTextAngle4;
 
     Spinner mSpinnerMoveSequences;
     ListView mListMoves;
@@ -104,6 +106,10 @@ public class SimpleControlActivity extends Activity {
         mBarAngle3.setMax(180);
         mBarAngle3.setOnSeekBarChangeListener(seekBarCallback);
 
+        mBarAngle4 = (SeekBar) findViewById(R.id.seekBar4);
+        mBarAngle4.setMax(180);
+        mBarAngle4.setOnSeekBarChangeListener(seekBarCallback);
+
         /* Init text views. */
         mTextAngle1 = (TextView) findViewById(R.id.textView);
         mTextAngle1.setText("0");
@@ -113,6 +119,9 @@ public class SimpleControlActivity extends Activity {
 
         mTextAngle3 = (TextView) findViewById(R.id.textView3);
         mTextAngle3.setText("0");
+
+        mTextAngle4 = (TextView) findViewById(R.id.textView4);
+        mTextAngle4.setText("0");
 
         new Thread(new Runnable() {
             @Override
@@ -139,7 +148,8 @@ public class SimpleControlActivity extends Activity {
             final int a1 = mBarAngle1.getProgress();
             final int a2 = mBarAngle2.getProgress();
             final int a3 = mBarAngle3.getProgress();
-            final FrameAngles frame = new FrameAngles(a1, a2, a3);
+            final int a4 = mBarAngle4.getProgress();
+            final FrameAngles frame = new FrameAngles(a1, a2, a3, a4);
 
             if(fromUser) {
                 new Thread(new Runnable() {
@@ -170,6 +180,13 @@ public class SimpleControlActivity extends Activity {
                     mTextAngle3.setText(String.format(Locale.getDefault(), "%d", progress));
                     if(seq.GetSelectedItem() != null)
                         seq.GetSelectedItem().SetAngle(2, (short) progress);
+
+                    break;
+
+                case R.id.seekBar4:
+                    mTextAngle4.setText(String.format(Locale.getDefault(), "%d", progress));
+                    if(seq.GetSelectedItem() != null)
+                        seq.GetSelectedItem().SetAngle(3, (short) progress);
                 break;
             }
 
@@ -204,12 +221,12 @@ public class SimpleControlActivity extends Activity {
                         @Override
                         public void run() {
                             for(MoveSequence.Element e : sequence.GetList()) {
-                                FrameAngles frame = new FrameAngles(e.Angle(0), e.Angle(1), e.Angle(2));
+                                FrameAngles frame = new FrameAngles(e.Angle(0), e.Angle(1), e.Angle(2), e.Angle(3));
                                 Wifi.Send(frame.ToByteArray());
                                 //e.SetAngle(e.Angle(2),(short) move2);Wifi.Send(tab);
                                 //Wifi.Send(new FrameAngles(e.Angle(0), e.Angle(1), e.Angle(2)));
                                 try {
-                                    Thread.sleep(1000);
+                                    Thread.sleep(2000);
                                 } catch (InterruptedException e1) {
                                     e1.printStackTrace();
                                 }
@@ -242,7 +259,8 @@ public class SimpleControlActivity extends Activity {
                     seq.Add(
                             (short)mBarAngle1.getProgress(),
                             (short)mBarAngle2.getProgress(),
-                            (short)mBarAngle3.getProgress()
+                            (short)mBarAngle3.getProgress(),
+                            (short)mBarAngle4.getProgress()
                     );
                     seq.Select(seq.GetList().size()-1);
                     /* Tricky update of list view. */
@@ -300,7 +318,9 @@ public class SimpleControlActivity extends Activity {
                     final FrameAngles frame = new FrameAngles(
                             seq.GetSelectedItem().Angle(0),
                             seq.GetSelectedItem().Angle(1),
-                            seq.GetSelectedItem().Angle(2)
+                            seq.GetSelectedItem().Angle(2),
+                            seq.GetSelectedItem().Angle(3)
+                            
                     );
                     new Thread(new Runnable() {
                         @Override
@@ -312,6 +332,7 @@ public class SimpleControlActivity extends Activity {
                     mBarAngle1.setProgress(seq.GetSelectedItem().Angle(0));
                     mBarAngle2.setProgress(seq.GetSelectedItem().Angle(1));
                     mBarAngle3.setProgress(seq.GetSelectedItem().Angle(2));
+                    mBarAngle4.setProgress(seq.GetSelectedItem().Angle(3));
                     /* Tricky update of list view. */
                     mListMoves.setAdapter(mListMoves.getAdapter());
                 } break;

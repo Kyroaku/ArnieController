@@ -8,35 +8,35 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/angleTextView"
+        android:id="@+id/joysticAngleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/joysticPowerTextView"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
+        android:layout_alignRight="@+id/joysticPowerTextView"
         android:layout_marginTop="23dp"
         android:text="@string/joy_contr_text1" />
 
     <TextView
-        android:id="@+id/powerTextView"
+        android:id="@+id/joysticPowerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/angleTextView"
-        android:layout_alignStart="@+id/angleTextView"
-        android:layout_below="@+id/angleTextView"
-        android:layout_marginTop="12dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/joysticAngleTextView"
+        android:layout_marginEnd="22dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginTop="18dp"
         android:text="@string/joy_contr_text2" />
 
 
     <myapp.arniecontroller.JoystickView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:id="@+id/joystickView"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:id="@+id/joystickView" />
+        android:layout_alignParentRight="true" />
 
     <myapp.arniecontroller.SliderView
         android:id="@+id/sliderView"
@@ -45,5 +45,26 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/sliderAngleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/joysticAngleTextView"
+        android:layout_alignBottom="@+id/joysticAngleTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="17dp"
+        android:text="@string/slid_contr_text1" />
+
+    <TextView
+        android:id="@+id/sliderPowerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/joysticPowerTextView"
+        android:layout_alignLeft="@+id/sliderAngleTextView"
+        android:layout_alignStart="@+id/sliderAngleTextView"
+        android:text="@string/slid_contr_text2" />
 
 </RelativeLayout>

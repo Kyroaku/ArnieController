@@ -2,9 +2,9 @@ package myapp.arniecontroller;
 
 
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
@@ -12,6 +12,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 
 /**
  * Created by hmaciejczyk on 2018-02-18.
@@ -24,24 +26,27 @@ public class JoystickView extends SurfaceView implements SurfaceHolder.Callback,
     private float baseRadius;
     private float hatRadius;
     private JoystickListener joystickCallback;
+    private Context context;
 
     public interface JoystickListener{
 
         void onJoystickMoved(float xPercent, float yPercent, int source);
+
     }
 
-    private void setupDimensions()
+    private void setupDimensions(int w, int h)
     {
-        centerX = getWidth() / 2;
-        centerY = getHeight() / 2;
-        baseRadius = Math.min(getWidth(), getHeight() / 3);
-        hatRadius = Math.min((float)getWidth(), (float)getHeight() / 6.0f);
+        centerX = w / 2;
+        centerY = h / 2;
+        baseRadius = Math.min(w, h / 3);
+        hatRadius = Math.min((float)w, h / 6.0f);
 
     }
 
     public JoystickView(Context context)
     {
         super(context);
+        this.context = context;
         getHolder().addCallback(this);
         setOnTouchListener(this);
         if(context instanceof JoystickListener) {
@@ -53,6 +58,7 @@ public class JoystickView extends SurfaceView implements SurfaceHolder.Callback,
     public JoystickView(Context context, AttributeSet attributeSet, int style)
     {
         super(context, attributeSet, style);
+        this.context = context;
         getHolder().addCallback(this);
         setOnTouchListener(this);
         if(context instanceof JoystickListener) {
@@ -63,6 +69,7 @@ public class JoystickView extends SurfaceView implements SurfaceHolder.Callback,
     public JoystickView(Context context, AttributeSet attributeSet)
     {
         super(context, attributeSet);
+        this.context = context;
         getHolder().addCallback(this);
         setOnTouchListener(this);
         if(context instanceof JoystickListener) {
@@ -91,7 +98,11 @@ public class JoystickView extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder)
     {
-        setupDimensions();
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        layoutParams.height = (int)(((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getWidth() * 0.5);
+        layoutParams.width = layoutParams.height;
+        setLayoutParams(layoutParams);
+        setupDimensions(layoutParams.width, layoutParams.height);
         drawJoystick(centerX, centerY);
 
     }
@@ -133,5 +144,7 @@ public class JoystickView extends SurfaceView implements SurfaceHolder.Callback,
         }
         return true;
     }
+
+
 }
 

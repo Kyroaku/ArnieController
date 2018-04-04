@@ -2,4 +2,6 @@
     <string name="app_name">ArnieController</string>
     <string name="joy_contr_text1">X power in %: </string>
     <string name="joy_contr_text2">Y power in %: </string>
+    <string name="slid_contr_text1">X power in %</string>
+    <string name="slid_contr_text2">Y power in %</string>
 </resources>

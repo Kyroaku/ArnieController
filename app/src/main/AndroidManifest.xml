@@ -34,7 +34,8 @@
 
         <activity
             android:name=".JoystickActivity"
-            android:label="ArnieController" >
+            android:label="ArnieController"
+            android:screenOrientation="landscape">
         </activity>
 
     </application>
